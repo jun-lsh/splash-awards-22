@@ -100,3 +100,59 @@ class GRUNet(nn.Module):
         weight = next(self.gru.parameters()).data
         hidden = weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to(device)
         return hidden
+
+def training_loop(epochs: int, learning_rate: float, hidden_dim=256, EPOCHS=5):
+    # Setting common hyperparameters, adjust later depending on input
+    batch_size = 0
+    time_steps = 0
+    height = 0
+    width = 0
+    n_features = 0
+
+    input_dim = (batch_size, time_steps, heigh, width, n_features)
+
+    output_dim = 1
+    n_layers = 1
+    drop_prob = 0
+
+    model = GRUNet(input_dim, hidden_dim, output_dim, n_layers, drop_prob)
+    model.to(device)
+
+    # Defining loss function and optimizer
+    criterion = nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
+
+    model.train()
+    print(f"Starting Training of model")
+    epoch_times = []
+
+    for i in range(epochs):
+        start_time = time.time()
+        h = model.init_hidden(batch_size)
+        avg_loss = 0
+        counter = 0
+
+
+        # TODO: Implement dataloader to loop through, this wont work until we have that
+        for x, label in train_loader:
+            counter += 1
+            h = h.data
+
+            model.zero_grad()
+
+            output, h = model.forward(x.to(device).float(), h)
+            loss = criterion(output, label.to(device).float())
+            loss.backward()
+            optimizer.step()
+            avg_loss += loss.item()
+
+            if counter%200 == 0:
+                print(f"Epoch {epoch} | Step: {counter}/{len(train_loader)} | Average Loss for Epoch: {avg_loss/counter}")
+
+        current_time = time.time()
+        print(f"Epoch {epoch}/{EPOCHS} Done, Total Loss: {avg_loss/len(train_loader)}")
+        print(f"Total Time Elapsed: {current_time-start_time} seconds")
+        epoch_times.append(current_time-start_time)
+    print(f"Total Training Time: {sum(epoch_times} seconds")
+
+    return model
