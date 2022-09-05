@@ -24,6 +24,8 @@
 <script lang="ts">
 import Vue from "vue";
 import Web3 from 'web3';
+import ipfs_utils from '@/plugins/ipfs_decode'
+import { Multihash } from '@/types/multihash'
 
 export default Vue.extend({
   name: "Main",
@@ -35,8 +37,7 @@ export default Vue.extend({
     }
   ),
   created(){
-    
-    console.log(`https://ropsten.infura.io/v3/${process.env.VUE_APP_INFURA_API_KEY}`);
+
     const web3 = new Web3(  
       new Web3.providers.HttpProvider(
         `https://ropsten.infura.io/v3/${process.env.VUE_APP_INFURA_API_KEY}`
@@ -44,15 +45,11 @@ export default Vue.extend({
     );
     const eternalStorageJson = require("./../../../truffle/build/contracts/EternalStorage.json");
     const eternalStorage = new web3.eth.Contract(eternalStorageJson.abi, this.CONTRACT_ADDRESS)
-    console.log("Called");
-    web3.eth.getAccounts().then(
-      data => {console.log(data);}
-    )
-
+    
     const value = "0x0";
     eternalStorage.methods.getHashValue(0, value).call().then(
-      function(data : Object){
-        console.log(data);
+      function(data : Multihash){
+        console.log(ipfs_utils.decode(data));
       }
     )
     
