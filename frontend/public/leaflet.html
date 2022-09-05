@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet sample</title>
+    <link rel = "stylesheet" href = "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+    <script src = "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+</head>
+
+<body>
+<div id = "map" style = "width: 900px; height: 580px"></div>
+<script>
+    // Creating map options
+    var mapOptions = {
+        center: [14.5994, 28.6731],
+        zoom: 3
+    }
+
+    // Creating a map object
+    var map = new L.map('map', mapOptions);
+
+    // Creating a Layer object
+    mbAttr = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    mbUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+
+    base_layer = L.tileLayer(mbUrl, {id: 'mapbox.streets', attribution: mbAttr})
+
+    // Adding layer to the map
+    map.addLayer(base_layer);
+
+    let centroids = [[-62.68893, 27.52887], [-62.69893, 27.52687],[-62.58893, 27.52887],[-62.69993, 26.52887],[-62.68833, 27.57887]]
+    for (const centroidsKey in centroids) {
+        var marker = L.marker(centroids[centroidsKey]).addTo(map);
+    }
+
+    // Send get request after 2 seconds of idling
+    map.on('moveend', function() {
+        setTimeout(function () {
+            console.log("send get request");
+        }, 2000);
+    });
+</script>
+</body>
+
+</html>

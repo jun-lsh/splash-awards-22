@@ -26,14 +26,24 @@
       </v-toolbar-items>
     </v-app-bar>
 
+    <v-main>
+      <NotFound v-if="notFound"/>
+      <router-view
+        v-else
+        @not-found="(bool) => this.notFound = bool"/>
+    </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import NotFound from "@/views/NotFound.vue";
 
 export default Vue.extend({
   name: "App",
+  components: {
+    NotFound,
+  },
   data: ()=> ({
     notFound: false,
   }),
@@ -51,10 +61,6 @@ export default Vue.extend({
           name: "Home",
           route: "/home",
         },
-        {
-          name: "API",
-          route: "/api/docs",
-        },
       ];
     },
   },
@@ -67,8 +73,8 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@import 'scss/variables.scss';
-@import "scss/global.scss";
+@import 'src/scss/variables.scss';
+@import "src/scss/global.scss";
 .v-app-bar a {
   text-decoration: none;
 }

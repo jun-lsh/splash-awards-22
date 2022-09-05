@@ -9,13 +9,16 @@ eth_keys = []
 contract_address = "0x3260Df12C458Ac84CBbeFb82F92E8Ddc57927CD7"
 contract_json = "./../truffle/build/contracts/EternalStorage.json"
 
+def initKeys():
+    global eth_keys
+    eth_keys = get_keys("./../api_keys.json", ["OWNER_ADDRESS", "OWNER_PRIVATE_KEY", "INFURA_API_KEY"])
+
+
 def initWeb3(provider, contract_address, contract_json):
     global w3
     global eternalStorage
-    global eth_keys
     w3 = web3.Web3(web3.HTTPProvider(provider))
     eternalStorage = w3.eth.contract(address = contract_address, abi = json.load(open(contract_json))["abi"])
-    eth_keys = get_keys("./../api_keys.json", ["OWNER_ADDRESS", "OWNER_PRIVATE_KEY"])
 
 def appendUint(key_num, val_num):
     global eth_keys
@@ -45,7 +48,8 @@ def appendHash(timestamp, coords, ipfs_hash):
     print(tx_hash)
 
 if __name__ == "__main__":
-    initWeb3("https://ropsten.infura.io/v3/4fb5537dd7124137a2bc95668e973d76", contract_address, contract_json)
+    initKeys()
+    initWeb3(f"https://ropsten.infura.io/v3/{eth_keys[2]}", contract_address, contract_json)
 #    appendUint(bytes.fromhex("abab"), 89)
     appendHash(0, [[0,0]]*4, "QmWXBwd5DYgfSFJC4VuTzMaPn9Hv8q7rZBjs1CBk1rnYZg")
     

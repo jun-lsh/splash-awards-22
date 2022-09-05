@@ -8,6 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/node": "^18.7.14",
+    "bs58": "^5.0.0",
     "vue": "^2.6.12",
     "vue-router": "^3.5.1",
     "vuetify": "^2.5.1",
