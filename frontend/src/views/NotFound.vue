@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="px-12 py-6">
     <router-link to="/">
-      < Back
+      &lt; Back
     </router-link>
     <h1>404 Not found, double check the link you went to</h1>
   </v-container>
