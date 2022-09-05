@@ -14,7 +14,7 @@ export default Vue.extend({
     {
       name: "",
       mainOut: "",
-      CONTRACT_ADDRESS: "0x79844ed92837B1E8a0BAfE33F582adE294D3F078"
+      CONTRACT_ADDRESS: "0x3260Df12C458Ac84CBbeFb82F92E8Ddc57927CD7"
     }
   ),
   created(){
@@ -31,8 +31,8 @@ export default Vue.extend({
       data => {console.log(data);}
     );
 
-    const value = "0xabab";
-    eternalStorage.methods.getUintValueB32(value).call().then(
+    const value = "0x0";
+    eternalStorage.methods.getHashValue(0, value).call().then(
       function(data : Object){
         console.log(data);
       }

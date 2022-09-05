@@ -6,7 +6,7 @@ w3 = None
 eternalStorage = None
 eth_keys = []
 
-contract_address = "0x79844ed92837B1E8a0BAfE33F582adE294D3F078"
+contract_address = "0x3260Df12C458Ac84CBbeFb82F92E8Ddc57927CD7"
 contract_json = "./../truffle/build/contracts/EternalStorage.json"
 
 def initWeb3(provider, contract_address, contract_json):
@@ -42,11 +42,12 @@ def appendHash(timestamp, coords, ipfs_hash):
     })
     signed_tx = w3.eth.account.sign_transaction(tx_dict, eth_keys[1])
     tx_hash = w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+    print(tx_hash)
 
 if __name__ == "__main__":
-    initWeb3("http://127.0.0.1:8545", contract_address, contract_json)
+    initWeb3("https://ropsten.infura.io/v3/4fb5537dd7124137a2bc95668e973d76", contract_address, contract_json)
 #    appendUint(bytes.fromhex("abab"), 89)
-    appendHash(11, [[70,120]]*4, "QmWXBwd5DYgfSFJC4VuTzMaPn9Hv8q7rZBjs1CBk1rnYZg")
+    appendHash(0, [[0,0]]*4, "QmWXBwd5DYgfSFJC4VuTzMaPn9Hv8q7rZBjs1CBk1rnYZg")
     
 
 
