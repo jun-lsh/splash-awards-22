@@ -47,9 +47,21 @@ export default Vue.extend({
     const eternalStorage = new web3.eth.Contract(eternalStorageJson.abi, this.CONTRACT_ADDRESS)
     
     const value = "0x0";
-    eternalStorage.methods.getHashValue(0, value).call().then(
-      function(data : Multihash){
-        console.log(ipfs_utils.decode(data));
+    eternalStorage.methods.getHashValue(1, value).call().then(
+      function(multihash : Multihash){
+        let ipfs_hash = ipfs_utils.decode(multihash);
+        console.log(ipfs_hash)
+        fetch("https://gateway.pinata.cloud/ipfs/" + ipfs_hash, {
+          headers: {
+            "accept": "application/json",
+          }
+        }).then(
+          response => response.json().then(
+            data => {
+              console.log(data);
+            }
+          )
+        )
       }
     )
     

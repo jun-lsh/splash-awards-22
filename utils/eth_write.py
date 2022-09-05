@@ -51,7 +51,7 @@ if __name__ == "__main__":
     initKeys()
     initWeb3(f"https://ropsten.infura.io/v3/{eth_keys[2]}", contract_address, contract_json)
 #    appendUint(bytes.fromhex("abab"), 89)
-    appendHash(0, [[0,0]]*4, "QmWXBwd5DYgfSFJC4VuTzMaPn9Hv8q7rZBjs1CBk1rnYZg")
+    appendHash(1, [[0,0]]*4, "QmaGLMK2xkeoVSYsx1B7XVgZGxybnTs5NCnVnkAXxkApxw")
     
 
 
