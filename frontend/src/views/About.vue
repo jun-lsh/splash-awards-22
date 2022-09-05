@@ -2,6 +2,7 @@
   <v-container fluid>
 
     <v-row class="pa-6">
+      <v-col cols="2"/>
       <v-col cols="4" class="d-flex justify-center" style="font-size: larger;">
         <div style="justify-content: center">
           <h2 style="text-align: center">What are microplastics?</h2> <br/>
@@ -14,7 +15,7 @@
         </div>
       </v-col>
 
-      <v-col cols="8" class="d-flex justify-center">
+      <v-col cols="6" class="d-flex justify-center">
         <v-card>
           <v-img src="images/primary_and_secondary_plastics.png" alt="Diagram explaining primary and secondary microplastics"/>
           <v-card-text>Secondary microplastics make up a much larger proportion of microplastics</v-card-text>
