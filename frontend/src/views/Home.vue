@@ -4,7 +4,6 @@
       <v-col cols="6" style="height: 100%">
         <iframe
           id="leaflet"
-          name="leaflet"
           src="leaflet.html"
           frameborder="0"
           width="100%"
@@ -38,7 +37,7 @@ export default Vue.extend({
       if (event.data === "created") {
       }
     },
-    
+
     onLoadFrame(event) {
       console.log("iframe created");
       this.iframe_created = true;
