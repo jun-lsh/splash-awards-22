@@ -15,6 +15,11 @@
     <script>
         // Let parent know iframe is created
         window.top.postMessage("created", "*")
+
+        // POC get data from parent
+        window.getDataFromParent = function (parentData) {
+            console.log(parentData);
+        }
         // Creating map options
         var mapOptions = {
             center: [14.5994, 28.6731],
@@ -57,12 +62,6 @@
         map.addLayer(base_layer);
         map.addLayer(heatmapLayer);
 
-
-        window.onmessage = function(e) { // inside the iframe
-            if (e.data === "data") {
-                console.log("POC Communication from parent to iframe");
-            }
-        };
 
         // Send get request after 2 seconds of idling
         map.on('moveend', function () {

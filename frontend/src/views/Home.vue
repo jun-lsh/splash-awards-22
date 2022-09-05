@@ -4,10 +4,12 @@
       <v-col cols="6" style="height: 100%">
         <iframe
           id="leaflet"
+          name="leaflet"
           src="leaflet.html"
           frameborder="0"
           width="100%"
           height="75%"
+          v-on:load="onLoadFrame"
         />
       </v-col>
     </v-row>
@@ -34,17 +36,18 @@ export default Vue.extend({
         console.log("POC communication between iframe and parent");
       }
       if (event.data === "created") {
-        console.log("iframe created");
-        this.iframe_created = true;
       }
     },
-
-    callIframe() {
+    
+    onLoadFrame(event) {
+      console.log("iframe created");
+      this.iframe_created = true;
+      this.sendToIframe("Data sent from parent to Iframe");
+    },
+    sendToIframe(data: any) {
       if (this.iframe_created) {
-        const iframe = document.querySelector("iframe");
-        if (iframe != null && iframe.contentWindow != null) {
-          iframe.contentWindow.postMessage("data", "*");
-        }
+        const iframe = window.frames["leaflet"];
+        iframe.getDataFromParent(data);
       }
       else {
         console.log("iframe not created, cant send message");
