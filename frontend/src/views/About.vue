@@ -30,7 +30,7 @@
         </v-card>
       </v-col>
 
-      <v-col cols="5" class="d-flex justify-center">
+      <v-col cols="8" class="d-flex justify-center">
         <v-row>
           <v-col cols="12" style="font-size: larger">
             <div style="justify-content: center">
