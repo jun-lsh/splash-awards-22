@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Web3 from 'web3';
+import Web3 from "web3";
 
 export default Vue.extend({
   name: "Main",
@@ -36,20 +36,19 @@ export default Vue.extend({
   ),
   created(){
     const web3 = new Web3("ws://127.0.0.1:8545");
-    const eternalStorageJson = require("./../../../truffle/build/contracts/EternalStorage.json");
-    const eternalStorage = new web3.eth.Contract(eternalStorageJson.abi, this.CONTRACT_ADDRESS)
+    const eternalStorageJson = require("../truffle/build/contracts/EternalStorage.json");
+    const eternalStorage = new web3.eth.Contract(eternalStorageJson.abi, this.CONTRACT_ADDRESS);
     console.log("Called");
     web3.eth.getAccounts().then(
       data => {console.log(data);}
-    )
+    );
 
     const value = 100;
     eternalStorage.methods.getUintValue(value).call().then(
       function(data : Object){
         console.log(data);
       }
-    )
-    
+    );
   }
 });
 </script>
