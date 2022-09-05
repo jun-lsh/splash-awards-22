@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div id="map" style="width: 900px; height: 580px"></div>
+    <div id="map" style="width: 1200px; height: 580px"></div>
     <script src="https://cdn.jsdelivr.net/npm/heatmapjs@2.0.2/heatmap.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-heatmap@1.0.0/leaflet-heatmap.js"></script>
 
@@ -57,26 +57,27 @@
 
         window.onmessage = function(e) { // inside the iframe
             if (e.data.event === "sendData") {
-                console.log(e.data.data);
+                console.log(e.data.data.heatmap);
+                heatmapLayer.setData(e.data.data);
             }
         };
 
         // Send get request after 2 seconds of idling
         map.on('moveend', function () {
             setTimeout(function () {
-                let centroids = [[-62.68893, 27.52887], [-62.69893, 27.52687], [-62.58893, 27.52887], [-62.69993, 26.52887], [-62.68833, 27.57887]]
-                var data = {
-                    data: [
-                        { lat: -62.68893, lng: 27.52887, count: 1 },
-                        { lat: -62.69893, lng: 27.52687, count: 1 },
-                        { lat: -62.58893, lng: 27.52887, count: 1 },
-                        { lat: -62.69993, lng: 26.52887, count: 1 },
-                        { lat: -62.68833, lng: 27.57887, count: 1 }]
-                }
-                heatmapLayer.setData(data);
-                for (const centroidsKey in centroids) {
-                    var marker = L.marker(centroids[centroidsKey]).addTo(map);
-                }
+                // let centroids = [[-62.68893, 27.52887], [-62.69893, 27.52687], [-62.58893, 27.52887], [-62.69993, 26.52887], [-62.68833, 27.57887]]
+                // var data = {
+                //     data: [
+                //         { lat: -62.68893, lng: 27.52887, count: 1 },
+                //         { lat: -62.69893, lng: 27.52687, count: 1 },
+                //         { lat: -62.58893, lng: 27.52887, count: 1 },
+                //         { lat: -62.69993, lng: 26.52887, count: 1 },
+                //         { lat: -62.68833, lng: 27.57887, count: 1 }]
+                // }
+                // heatmapLayer.setData(data);
+                // for (const centroidsKey in centroids) {
+                //     var marker = L.marker(centroids[centroidsKey]).addTo(map);
+                // }
 
                 console.log("send get request");
                 window.top.postMessage("idle", "*")

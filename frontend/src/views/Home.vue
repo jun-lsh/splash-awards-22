@@ -1,13 +1,13 @@
 <template>
   <v-container fluid class="px-12 py-6 fill-height">
     <v-row class="d-flex align-center justify-center fill-height">
-      <v-col cols="6" style="height: 100%">
+      <v-col cols="12" style="height: 100%">
         <iframe
           id="leaflet"
           src="leaflet.html"
           frameborder="0"
-          width="100%"
-          height="75%"
+          width="70%"
+          height="100%"
           v-on:load="onLoadIframe"
         />
       </v-col>
@@ -32,20 +32,25 @@ export default Vue.extend({
       iframe_created: false,
       web3: {} as Web3,
       eternalStorage: {} as Contract,
-      eternalStorageJson: require("./../../../truffle/build/contracts/EternalStorage.json")
+      eternalStorageJson: require("./../components/EternalStorage.json")
     }
   ),
   methods: {
-    receiveMessage(event) {
+    receiveMessage(event : any) {
       if (event.data === "idle") {
         console.log("POC communication between iframe and parent");
+        
       }
     },
 
     onLoadIframe() {
       console.log("iframe created");
       this.iframe_created = true;
-      this.sendDataToIframe([1,2,3]);
+      this.getHeatMapData(6, "0x0").then(
+        data => {
+          this.sendDataToIframe(data);
+        }
+      );
     },
     sendDataToIframe(data: any) {
       if (this.iframe_created) {
@@ -62,26 +67,30 @@ export default Vue.extend({
       }
     },
 
-    getHeatMapData(timestamp : number,  coords : string){
+    getHeatMapData(timestamp : number,  coords : string) : Promise<any>{
       console.log("called");
-
-      this.eternalStorage.methods.getHashValue(timestamp, coords).call().then(
+      return new Promise<any>(
+        resolve => {
+          this.eternalStorage.methods.getHashValue(timestamp, coords).call().then(
         function(multihash : Multihash){
           let ipfs_hash = ipfs_utils.decode(multihash);
           console.log(ipfs_hash);
-          fetch("https://gateway.pinata.cloud/ipfs/" + ipfs_hash, {
+          fetch("https://cf-ipfs.com/ipfs/" + ipfs_hash, {
             headers: {
               "accept": "application/json",
             }
           }).then(
             response => response.json().then(
               data => {
-                console.log(data);
+                //console.log(data)
+                resolve(data)
               }
             )
           );
         }
       );
+        }
+      )
     }
   },
   mounted () {

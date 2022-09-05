@@ -15,4 +15,4 @@ def pinFile(path):
 
 if __name__ == "__main__":
     initPinata()
-    pinFile("test_file.md")
+    pinFile("base_heatmap.json")

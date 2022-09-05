@@ -35,7 +35,7 @@ def appendHash(timestamp, coords, ipfs_hash):
     nonce = w3.eth.getTransactionCount(eth_keys[0])
     ipfs_processed = get_bytes32_from_ipfs(ipfs_hash)
     print(f'[+] Processed IPFS Hash {ipfs_processed}')
-    print(f'[+] Coords {hex(int.from_bytes(get_bytes32_from_coords(coords),"big"))}')
+    print(f'[+] Coords {hex(int.from_bytes(get_bytes32_from_coords(coords),"little"))}')
     tx_dict = eternalStorage.functions.setHashValue(timestamp, 
         get_bytes32_from_coords(coords), 
         ipfs_processed[0], ipfs_processed[1], ipfs_processed[2]
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     initKeys()
     initWeb3(f"https://ropsten.infura.io/v3/{eth_keys[2]}", contract_address, contract_json)
 #    appendUint(bytes.fromhex("abab"), 89)
-    appendHash(1, [[0,0]]*4, "QmaGLMK2xkeoVSYsx1B7XVgZGxybnTs5NCnVnkAXxkApxw")
+    appendHash(6, [[0,1]]*4, "QmfM9xSr5g344Uhxt2kzxb4EoBqy4hy6zGPJEYD4MUCucu")
     
 
 
