@@ -52,7 +52,7 @@ export default Vue.extend({
       }
     },
 
-    getHeatMapData(timestamp : Number,  coords : string){
+    getHeatMapData(timestamp : number,  coords : string){
       console.log("called");
     
     this.eternalStorage.methods.getHashValue(timestamp, coords).call().then(
