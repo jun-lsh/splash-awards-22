@@ -37,20 +37,20 @@ contract EternalStorage is Owner {
         return (entry.digest, entry.hashFunction, entry.size);
     }
 
-    mapping(uint => uint) UIntStorageTest;
+    // mapping(bytes32 => uint) UIntStorageTest;
 
-    function setUintValue(uint _index, uint _val)
-    public
-    isOwner {
-        UIntStorageTest[_index] = _val;
-    }
+    // function setUintValueB32(bytes32 _index, uint _val)
+    // public
+    // isOwner {
+    //     UIntStorageTest[_index] = _val;
+    // }
 
-    function getUintValue(uint _index)
-    public
-    view
-    returns(uint val)
-    {
-        return UIntStorageTest[_index];
-    }
+    // function getUintValueB32(bytes32 _index)
+    // public
+    // view
+    // returns(uint val)
+    // {
+    //     return UIntStorageTest[_index];
+    // }
 
 }

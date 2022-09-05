@@ -1,0 +1,81 @@
+@import "variables";
+
+// Typography
+h1 {
+  color: $c-text-title;
+  font-size: 1.875rem; // 30px
+  font-variation-settings: "wght" 600, "wdth" 100, "CTGR" 100; // Display SemiBold
+}
+h2,
+.text-dark-primary {
+  color: $c-text-dark-primary;
+}
+.text-dark-tertiary {
+  color: $c-text-dark-tertiary;
+}
+.text-semibold {
+  font-weight: 600;
+}
+.text-display-semibold {
+  font-variation-settings: "wght" 600, "CTGR" 100;
+}
+.text-font-size {
+  &-14 {
+    font-size: 0.875rem;
+  }
+  &-16 {
+    font-size: 1rem;
+  }
+  &-22 {
+    font-size: 1.375rem;
+  }
+}
+
+// More spacing helpers
+.p {
+  &l- {
+    &20 {
+      padding-left: 80px;
+    }
+  }
+  &r- {
+    &31 {
+      padding-right: 124px;
+    }
+  }
+}
+
+.m {
+  &t- {
+    &24 {
+      margin-top: 96px;
+    }
+  }
+}
+
+
+// Uncomment below to check if there are font sizes not explicitly defined.
+//#app {
+//  font-size: 9rem;
+//}
+
+// Module Units
+.links {
+  color: gray;
+}
+.links,
+.unit-card {
+  text-decoration: none;
+}
+
+#unit-grid {
+  max-width: 80rem;
+}
+.learn-arrow {
+  color: $c-primary-foreground;
+  margin-bottom: -4px;
+}
+
+#module-about {
+  border: 1px solid $c-text-dark-primary;
+}
