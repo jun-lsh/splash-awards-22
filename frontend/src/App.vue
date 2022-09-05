@@ -39,6 +39,7 @@
 import Vue from "vue";
 import NotFound from "@/views/NotFound.vue";
 
+
 export default Vue.extend({
   name: "App",
   components: {

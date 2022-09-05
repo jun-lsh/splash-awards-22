@@ -13,7 +13,8 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet-heatmap@1.0.0/leaflet-heatmap.js"></script>
 
     <script>
-
+        // Let parent know iframe is created
+        window.top.postMessage("created", "*")
         // Creating map options
         var mapOptions = {
             center: [14.5994, 28.6731],
@@ -56,6 +57,13 @@
         map.addLayer(base_layer);
         map.addLayer(heatmapLayer);
 
+
+        window.onmessage = function(e) { // inside the iframe
+            if (e.data === "data") {
+                console.log("POC Communication from parent to iframe");
+            }
+        };
+
         // Send get request after 2 seconds of idling
         map.on('moveend', function () {
             setTimeout(function () {
@@ -74,7 +82,7 @@
                 }
 
                 console.log("send get request");
-                window.parent.thisMethod();
+                window.top.postMessage("idle", "*")
             }, 2000);
         });
     </script>
