@@ -1,12 +1,29 @@
 <template>
   <v-container fluid class="px-12 py-6 fill-height">
     <v-row class="d-flex align-center justify-center fill-height">
-      <v-col cols="12" style="height: 100%">
+      <v-col cols="4">
+          <h2>
+            What Does This Map Show Me?
+          </h2>
+        <p style="text-align: justify; text-justify: inter-word;">
+          The map displays the <b>concentration of microplastics in the ocean</b>
+          and using <b>deep learning</b>, is able to <b>predict the motion and concentration of
+          microplastics in the future</b>. In shorter timescales, this map would be helpful to
+          facilitate cleanup efforts in the ocean by <b>highlighting areas of high microplastics concentration</b>,
+          which is directly correlated with general plastic pollution in the region.
+          In longer timescales, we would be able to see <b>the dangers if this problem is left unchecked</b>,
+          allowing us to see how our oceans may end up if we do not cut down on plastic waste.
+
+
+          This map is predicting the microplastics concentration for <b>6 September, 2022</b>
+        </p>
+      </v-col>
+      <v-col cols="8" style="height: 70%">
         <iframe
           id="leaflet"
           src="leaflet.html"
           frameborder="0"
-          width="70%"
+          width="100%"
           height="100%"
           v-on:load="onLoadIframe"
         />
@@ -39,7 +56,7 @@ export default Vue.extend({
     receiveMessage(event : any) {
       if (event.data === "idle") {
         console.log("POC communication between iframe and parent");
-        
+
       }
     },
 
