@@ -2071,6 +2071,12 @@
     "version": "0.8.16+commit.07a7930e.Emscripten.clang"
   },
   "networks": {
+    "3": {
+      "events": {},
+      "links": {},
+      "address": "0xE2A76e51ACc096eAa7BB6A903e56098B270753Aa",
+      "transactionHash": "0x689bc8d9a1cc49e6afa5c077924787b20faadf193badbe5cbc4c7fdf89851c93"
+    },
     "1662266636192": {
       "events": {},
       "links": {},
@@ -2103,7 +2109,7 @@
     }
   },
   "schemaVersion": "3.4.9",
-  "updatedAt": "2022-09-04T15:28:11.526Z",
+  "updatedAt": "2022-09-05T06:46:27.262Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Set & change owner",
