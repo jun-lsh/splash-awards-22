@@ -4,6 +4,14 @@ from typing import Tuple
 import torch.nn as nn
 import torch
 
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import Dataset
+
+import pickle
+
+import numpy as np
+
+
 # torch.cuda.is_available() checks and returns a Boolean True if a GPU is available, else it'll return False
 is_cuda = torch.cuda.is_available()
 
@@ -14,29 +22,28 @@ else:
     device = torch.device("cpu")
 
 
-def conv_output_shape(d_h_w, kernel_size, stride=1, pad=0, dilation=1):
+def conv_output_shape(h_w, kernel_size, stride=1, pad=0, dilation=1):
     """
     Utility function for computing output of convolutions
     takes a tuple of (d,h,w) and returns a tuple of (d,h,w)
     """
 
-    if type(d_h_w) is not tuple:
-        d_h_w = (d_h_w, d_h_w, d_h_w)
+    if type(h_w) is not tuple:
+        h_w = (h_w, h_w, h_w)
 
     if type(kernel_size) is not tuple:
-        kernel_size = (kernel_size, kernel_size, kernel_size)
+        kernel_size = (kernel_size, kernel_size)
 
     if type(stride) is not tuple:
-        stride = (stride, stride, stride)
+        stride = (stride, stride)
 
     if type(pad) is not tuple:
-        pad = (pad, pad, pad)
+        pad = (pad, pad)
 
-    d = (d_h_w[0] + (2 * pad[0]) - (dilation * (kernel_size[0] - 1)) - 1) // stride[0] + 1
-    h = (d_h_w[1] + (2 * pad[1]) - (dilation * (kernel_size[1] - 1)) - 1) // stride[1] + 1
-    w = (d_h_w[2] + (2 * pad[2]) - (dilation * (kernel_size[2] - 1)) - 1) // stride[2] + 1
+    h = (h_w[0] + (2 * pad[0]) - (dilation * (kernel_size[0] - 1)) - 1) // stride[0] + 1
+    w = (h_w[1] + (2 * pad[1]) - (dilation * (kernel_size[1] - 1)) - 1) // stride[1] + 1
 
-    return d, h, w
+    return h, w
 
 
 class GRUNet(nn.Module):
@@ -67,7 +74,7 @@ class GRUNet(nn.Module):
         # Quite sure ts0 = time_steps as number of time steps should not be changed throughout the convolutions
         # [batch_size, n_features, time_steps, height, width] -> [batch_size, n_features, ts0, h0, w0]
         self.conv0 = nn.Conv3d(self.n_features, self.n_features, self.feature_kernel)
-        ts0, h0, w0 = conv_output_shape((self.time_steps, self.height, self.width), self.feature_kernel)
+        h0, w0 = conv_output_shape((self.time_steps, self.height, self.width), self.feature_kernel)
         # TODO: Add more conv layers
 
         # this final conv layer will learn to compress n_features into 1 number, essentially a 1*1*1*n_features kernel
@@ -79,7 +86,7 @@ class GRUNet(nn.Module):
 
         # input size of GRU will be the flattened feature map size = h0 * w0
         self.gru = nn.GRU(h0*w0, self.hidden_size, self.n_layers, batch_first=True, dropout=drop_prob)
-        self.fc = nn.Linear(self.hidden_size * ts0, self.output_dim)
+        self.fc = nn.Linear(self.hidden_size * self.time_steps, self.output_dim)
         self.relu = nn.ReLU()
 
     def forward(self, x, h):
@@ -90,6 +97,7 @@ class GRUNet(nn.Module):
         x = torch.permute(x, (0, 2, 3, 4, 1))
         # remove the 1 dimensional n_features channel. new shape [batch_size, time_steps, height, width]
         x = torch.squeeze(x)
+        # flatten the height x width channel into a final feature map. -> [batch_size, time_steps, height * width]
         x = self.flatten(x)
 
         out, h = self.gru(x, h)
@@ -101,15 +109,51 @@ class GRUNet(nn.Module):
         hidden = weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to(device)
         return hidden
 
-def training_loop(epochs: int, learning_rate: float, hidden_dim=256, EPOCHS=5):
-    # Setting common hyperparameters, adjust later depending on input
-    batch_size = 0
-    time_steps = 0
-    height = 0
-    width = 0
-    n_features = 0
+    
+class CustomImageDataset(Dataset):
+    def __init__(self, max_shape=(11,11), data_file=r"data/train_data.pickle"):
+        with open(data_file, 'rb') as handle:
+            # train_files holds a list of [label, time_series] pairs
+            # where each label themselves are a list of densities for each time frame.
+            train_data = pickle.load(handle)
 
-    input_dim = (batch_size, time_steps, heigh, width, n_features)
+        # the different time series data are all of different shapes. We have to pad them on the fly.
+        self.labels, self.images = zip(*train_data)
+        self.height, self.width = max_shape
+
+    def __len__(self):
+        return len(self.labels)
+
+    def __getitem__(self, idx):
+        image = self.images[idx]
+        label = self.labels[idx]
+        
+        # calculate margins for paddings
+        top = int(np.floor((height - img.shape[1])/2.0))
+        bottom = int(np.ceil((height - img.shape[1])/2.0))
+        left = int(np.floor((width - img.shape[2])/2.0))
+        right = int(np.ceil((width - img.shape[2])/2.0))
+        
+        # pad the image -> [don't pad time, pad height, pad width, don't pad channels]
+        image = np.pad(image, [(0, 0), (top, bottom), (left, right), (0, 0)])
+
+        return image, label
+
+
+def training_loop(epochs: int, learning_rate: float, hidden_dim=64, EPOCHS=5, data_file=r"data/train_data.pickle"):
+    # Setting common hyperparameters, adjust later depending on input
+    batch_size = 32
+    time_steps = 3
+    
+    # from the better_get_data.ipynb notebook we know the max is 11 x 11 images
+    height = 11
+    width = 11
+    n_features = 2
+    
+    # setup train data
+    train_loader = DataLoader(CustomImageDataset(max_shape=(height, width)), batch_size=batch_size, shuffle=True)
+
+    input_dim = (batch_size, time_steps, height, width, n_features)
 
     output_dim = 1
     n_layers = 1
@@ -128,17 +172,15 @@ def training_loop(epochs: int, learning_rate: float, hidden_dim=256, EPOCHS=5):
 
     for i in range(epochs):
         start_time = time.time()
-        h = model.init_hidden(batch_size)
         avg_loss = 0
         counter = 0
 
 
         # TODO: Implement dataloader to loop through, this wont work until we have that
         for x, label in train_loader:
-            counter += 1
-            h = h.data
-
+            h = model.init_hidden(batch_size)
             model.zero_grad()
+            counter += 1
 
             output, h = model.forward(x.to(device).float(), h)
             loss = criterion(output, label.to(device).float())
