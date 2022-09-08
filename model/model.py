@@ -4,13 +4,12 @@ from typing import Tuple
 import torch.nn as nn
 import torch
 
-from torch.nn.utils.rnn import pad_sequence
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 
 import pickle
 
 import numpy as np
-
+import time
 
 # torch.cuda.is_available() checks and returns a Boolean True if a GPU is available, else it'll return False
 is_cuda = torch.cuda.is_available()
@@ -106,7 +105,7 @@ class GRUNet(nn.Module):
 
     def init_hidden(self, batch_size):
         weight = next(self.gru.parameters()).data
-        hidden = weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to(device)
+        hidden = weight.new(self.n_layers, batch_size, self.hidden_size).zero_().to(device)
         return hidden
 
     
@@ -129,10 +128,10 @@ class CustomImageDataset(Dataset):
         label = self.labels[idx]
         
         # calculate margins for paddings
-        top = int(np.floor((height - img.shape[1])/2.0))
-        bottom = int(np.ceil((height - img.shape[1])/2.0))
-        left = int(np.floor((width - img.shape[2])/2.0))
-        right = int(np.ceil((width - img.shape[2])/2.0))
+        top = int(np.floor((self.height - image.shape[1])/2.0))
+        bottom = int(np.ceil((self.height - image.shape[1])/2.0))
+        left = int(np.floor((self.width - image.shape[2])/2.0))
+        right = int(np.ceil((self.width - image.shape[2])/2.0))
         
         # pad the image -> [don't pad time, pad height, pad width, don't pad channels]
         image = np.pad(image, [(0, 0), (top, bottom), (left, right), (0, 0)])
@@ -140,8 +139,9 @@ class CustomImageDataset(Dataset):
         return image, label
 
 
-def training_loop(epochs: int, learning_rate: float, hidden_dim=64, EPOCHS=5, data_file=r"data/train_data.pickle"):
+def training_loop(epochs: int, learning_rate: float, data_file=r"data/train_data.pickle"):
     # Setting common hyperparameters, adjust later depending on input
+    hidden_dim = 64
     batch_size = 32
     time_steps = 3
     
@@ -151,7 +151,7 @@ def training_loop(epochs: int, learning_rate: float, hidden_dim=64, EPOCHS=5, da
     n_features = 2
     
     # setup train data
-    train_loader = DataLoader(CustomImageDataset(max_shape=(height, width)), batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(CustomImageDataset(max_shape=(height, width), data_file=data_file), batch_size=batch_size, shuffle=True)
 
     input_dim = (batch_size, time_steps, height, width, n_features)
 
@@ -164,7 +164,7 @@ def training_loop(epochs: int, learning_rate: float, hidden_dim=64, EPOCHS=5, da
 
     # Defining loss function and optimizer
     criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     model.train()
     print(f"Starting Training of model")
@@ -189,12 +189,12 @@ def training_loop(epochs: int, learning_rate: float, hidden_dim=64, EPOCHS=5, da
             avg_loss += loss.item()
 
             if counter%200 == 0:
-                print(f"Epoch {epoch} | Step: {counter}/{len(train_loader)} | Average Loss for Epoch: {avg_loss/counter}")
+                print(f"Epoch {i} | Step: {counter}/{len(train_loader)} | Average Loss for Epoch: {avg_loss/counter}")
 
         current_time = time.time()
-        print(f"Epoch {epoch}/{EPOCHS} Done, Total Loss: {avg_loss/len(train_loader)}")
+        print(f"Epoch {i}/{epochs} Done, Total Loss: {avg_loss/len(train_loader)}")
         print(f"Total Time Elapsed: {current_time-start_time} seconds")
         epoch_times.append(current_time-start_time)
-    print(f"Total Training Time: {sum(epoch_times} seconds")
+    print(f"Total Training Time: {sum(epoch_times)} seconds")
 
     return model
