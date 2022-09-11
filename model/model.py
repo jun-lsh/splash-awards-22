@@ -1,15 +1,18 @@
-# you know i love copy pasting code
+'''
+You can copy paste this entire code block into a google colab notebook cell and run it.
+'''
+
 from typing import Tuple
 
 import torch.nn as nn
 import torch
 
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Subset
 
-import pickle
-
+from torch.utils.data import Dataset, DataLoader, random_split
 import numpy as np
 import time
+import pickle
 
 # torch.cuda.is_available() checks and returns a Boolean True if a GPU is available, else it'll return False
 is_cuda = torch.cuda.is_available()
@@ -73,8 +76,12 @@ class GRUNet(nn.Module):
         # Quite sure ts0 = time_steps as number of time steps should not be changed throughout the convolutions
         # [batch_size, n_features, time_steps, height, width] -> [batch_size, n_features, ts0, h0, w0]
         self.conv0 = nn.Conv3d(self.n_features, self.n_features, self.feature_kernel)
-        h0, w0 = conv_output_shape((self.time_steps, self.height, self.width), self.feature_kernel)
+        h0, w0 = conv_output_shape((self.height, self.width), (3, 3))
         # TODO: Add more conv layers
+        self.conv1 = nn.Conv3d(self.n_features, self.n_features, self.feature_kernel)
+        h1, w1 = conv_output_shape((h0, w0), (3, 3))
+        # normalize after convolutions
+        self.norm = nn.BatchNorm3d(self.n_features)
 
         # this final conv layer will learn to compress n_features into 1 number, essentially a 1*1*1*n_features kernel
         # -> [batch_size, 1, ts0, h0, w0]
@@ -84,14 +91,18 @@ class GRUNet(nn.Module):
         self.flatten = nn.Flatten(-2,-1)
 
         # input size of GRU will be the flattened feature map size = h0 * w0
-        self.gru = nn.GRU(h0*w0, self.hidden_size, self.n_layers, batch_first=True, dropout=drop_prob)
-        self.fc = nn.Linear(self.hidden_size * self.time_steps, self.output_dim)
+        self.gru = nn.GRU(h1*w1, self.hidden_size, self.n_layers, batch_first=True, dropout=drop_prob)
+        self.fc0 = nn.Linear(self.hidden_size, self.hidden_size//2)
+        self.fc1 = nn.Linear(self.hidden_size//2, self.output_dim)
+
         self.relu = nn.ReLU()
 
     def forward(self, x, h):
         # permute as conv3d accepts inputs of [batch_size, channels/n_features, D/time_steps, H, W]
         x = torch.permute(x, (0, 4, 1, 2, 3))
         x = self.conv0(x)
+        x = self.conv1(x)
+        x = self.norm(x)
         x = self.feature_conv(x)
         x = torch.permute(x, (0, 2, 3, 4, 1))
         # remove the 1 dimensional n_features channel. new shape [batch_size, time_steps, height, width]
@@ -100,7 +111,10 @@ class GRUNet(nn.Module):
         x = self.flatten(x)
 
         out, h = self.gru(x, h)
-        out = self.fc(self.relu(out[:, -1]))
+        out = self.fc0(self.relu(out[:, -1]))
+        out = self.fc1(self.relu(out))
+        out = torch.squeeze(out)
+
         return out, h
 
     def init_hidden(self, batch_size):
@@ -135,14 +149,13 @@ class CustomImageDataset(Dataset):
         
         # pad the image -> [don't pad time, pad height, pad width, don't pad channels]
         image = np.pad(image, [(0, 0), (top, bottom), (left, right), (0, 0)])
-
         return image, label
 
 
 def training_loop(epochs: int, learning_rate: float, data_file=r"data/train_data.pickle"):
     # Setting common hyperparameters, adjust later depending on input
     hidden_dim = 64
-    batch_size = 32
+    batch_size = 128
     time_steps = 3
     
     # from the better_get_data.ipynb notebook we know the max is 11 x 11 images
@@ -151,7 +164,14 @@ def training_loop(epochs: int, learning_rate: float, data_file=r"data/train_data
     n_features = 2
     
     # setup train data
-    train_loader = DataLoader(CustomImageDataset(max_shape=(height, width), data_file=data_file), batch_size=batch_size, shuffle=True)
+    dataset = CustomImageDataset(max_shape=(height, width), data_file=data_file)
+
+    train_size = int(0.85 * len(dataset))
+    test_size = len(dataset) - train_size
+    train_dataset, test_dataset = random_split(dataset, [train_size, test_size], generator=torch.Generator().manual_seed(42))
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 
     input_dim = (batch_size, time_steps, height, width, n_features)
 
@@ -171,14 +191,13 @@ def training_loop(epochs: int, learning_rate: float, data_file=r"data/train_data
     epoch_times = []
 
     for i in range(epochs):
+        h = model.init_hidden(batch_size)
         start_time = time.time()
         avg_loss = 0
         counter = 0
 
-
-        # TODO: Implement dataloader to loop through, this wont work until we have that
         for x, label in train_loader:
-            h = model.init_hidden(batch_size)
+            h = h.detach()
             model.zero_grad()
             counter += 1
 
@@ -188,13 +207,20 @@ def training_loop(epochs: int, learning_rate: float, data_file=r"data/train_data
             optimizer.step()
             avg_loss += loss.item()
 
-            if counter%200 == 0:
-                print(f"Epoch {i} | Step: {counter}/{len(train_loader)} | Average Loss for Epoch: {avg_loss/counter}")
-
         current_time = time.time()
-        print(f"Epoch {i}/{epochs} Done, Total Loss: {avg_loss/len(train_loader)}")
+        print(f"Epoch {i+1}/{epochs} Done, Total Loss: {avg_loss/len(train_loader)}")
         print(f"Total Time Elapsed: {current_time-start_time} seconds")
         epoch_times.append(current_time-start_time)
     print(f"Total Training Time: {sum(epoch_times)} seconds")
 
+    print("-------------EVALUATING---------------")
+    print('[prediction, target]')
+    for x, label in test_loader:
+      with torch.no_grad():
+        h = model.init_hidden(batch_size)
+        output, h = model.forward(x.to(device).float(), h)
+        print(torch.stack([output.to('cpu'), label], axis=1))
+
     return model
+
+# model = training_loop(100, 1e-3, 'train_data.pickle')
