@@ -57,7 +57,6 @@
 
         window.onmessage = function(e) { // inside the iframe
             if (e.data.event === "sendData") {
-                console.log(e.data.data.heatmap);
                 heatmapLayer.setData(e.data.data);
             }
         };
