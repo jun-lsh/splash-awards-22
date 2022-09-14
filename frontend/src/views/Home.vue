@@ -69,7 +69,7 @@ export default Vue.extend({
         }
       );
     },
-    sendDataToIframe(data: any) {
+    sendDataToIframe(data: {event: string, data: [{lat: number, lng: number, count: number}]}) {
       if (this.iframe_created) {
         const iframe = document.querySelector("iframe");
         if (iframe != null && iframe.contentWindow != null) {
@@ -100,7 +100,7 @@ export default Vue.extend({
             response => response.json().then(
               data => {
                 //console.log(data)
-                resolve(data)
+                resolve(data);
               }
             )
           );
