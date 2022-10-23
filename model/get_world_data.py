@@ -404,7 +404,14 @@ def initCreds():
     service_account = '860927269044-compute@developer.gserviceaccount.com'
     private_key = 'keys/splash-awards-telegram-bot-b9f732990190.json'
 
+<<<<<<< HEAD
     # HYCOM dataset usually has a 3 day delay for satellite data
+=======
+    # HYCOM dataset usually has a 3-day delay for satellite data
+    # remember we are predicting 1 day into the future, and the date we provide is the date we are trying to
+    # predict values for, and it will request api data for all days before but not including itself, therefore timedelta
+    # minus 2 days.
+>>>>>>> a277fa69c165b6929a527b856a0a1b8d9f49907d
     date = datetime.today() - timedelta(days=2)
     # time frame for the model
     timespan = 7
