@@ -188,7 +188,7 @@ def call_model(*args, **kwargs):
 
     # read the atlantic ocean shape from shapefile
     print("reading sampling region atlantic")
-    tes = gp.read_file(r'data\iho\iho.shp')
+    tes = gp.read_file(r'./data/iho/iho.shp')
     df = tes.loc[tes.name.isin(['South Atlantic Ocean', 'North Atlantic Ocean'])]
     atlantic = df.dissolve().to_crs(epsg=3857)
 
@@ -414,7 +414,7 @@ def initCreds():
     # number of points to sample from the atlantic, and request api data for to predict
     sample_n = 10000
     # filepath of model to use for inference
-    model_path = r"model_checkpoints/GRU_epoch_1500_loss_3.401.pt"
+    model_path = r"./model_checkpoints/GRU_epoch_1500_loss_3.401.pt"
 
     # If we have a GPU available, we'll set our device to GPU. We'll use this device variable later in our code.
     if torch.cuda.is_available():
