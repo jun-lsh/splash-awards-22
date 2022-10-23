@@ -404,7 +404,7 @@ def initCreds():
     service_account = '860927269044-compute@developer.gserviceaccount.com'
     private_key = 'keys/splash-awards-telegram-bot-b9f732990190.json'
 
-    # HYCOM dataset usually has a 2 day delay for satellite data
+    # HYCOM dataset usually has a 3 day delay for satellite data
     date = datetime.today() - timedelta(days=2)
     # time frame for the model
     timespan = 7

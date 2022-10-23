@@ -7,24 +7,22 @@ from utils.eth_write import *
 
 import requests
 import logging
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram import Update, Bot
+from telegram.ext import Updater, MessageHandler, Filters, CallbackContext
 
 # Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Sends explanation on how to use the bot."""
-    await update.message.reply_text("Welcome to the Splash Microplastics Tracker channel! "
-                                    + "This is merely a prototype and not production ready~")
-
 def main() -> None:
     tele_token = get_keys("./../api_keys.json", ["TELEGRAM_TOKEN"])[0]
-    application = Application.builder().token(tele_token).build()
-    application.add_handler(CommandHandler(["start"], start))
-    application.run_polling()
+    print(tele_token)
+    # updater = Updater(tele_token)
+    bot = Bot(tele_token)
+    
+
 
 if __name__ == "__main__":
     main()
+    
