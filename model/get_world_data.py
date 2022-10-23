@@ -163,7 +163,17 @@ class CustomImageDataset(Dataset):
         return coords, image
 
 
-def main(*args, **kwargs):
+def call_model(*args, **kwargs):
+    
+    # sacrilege 
+    global service_account
+    global private_key
+    global date
+    global timespan
+    global sample_n
+    global model_path
+    global device
+    
     # initialize earth engine using json key for service account
     credentials = ee.ServiceAccountCredentials(service_account, private_key)
     ee.Initialize(credentials)
@@ -373,6 +383,16 @@ def main(*args, **kwargs):
 
 
 def initCreds():
+
+    # sacrilege 
+    global service_account
+    global private_key
+    global date
+    global timespan
+    global sample_n
+    global model_path
+    global device
+
     service_account = '860927269044-compute@developer.gserviceaccount.com'
     private_key = 'keys/splash-awards-telegram-bot-b9f732990190.json'
 
@@ -393,5 +413,4 @@ def initCreds():
 
 if __name__ == "__main__":
     initCreds()
-
-    main()
+    call_model()
