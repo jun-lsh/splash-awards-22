@@ -62,6 +62,10 @@ export default Vue.extend({
           name: "Home",
           route: "/home",
         },
+        {
+          name: "Clusters",
+          route: "/clusters",
+        },
       ];
     },
   },

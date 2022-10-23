@@ -63,19 +63,24 @@ export default Vue.extend({
     onLoadIframe() {
       console.log("iframe created");
       this.iframe_created = true;
+      const lat = this.$route.query.lat;
+      const lng = this.$route.query.lng;
+      if (lat != null && lng != null) {
+        this.sendDataToIframe({event: "setCenter", data: {lat: lat, lng: lng}});
+      }
       this.getHeatMapData(6, "0x0").then(
         data => {
-          this.sendDataToIframe(data);
+          this.sendDataToIframe({event: "sendData", data: data});
         }
       );
     },
-    sendDataToIframe(data: {event: string, data: [{lat: number, lng: number, count: number}]}) {
+    sendDataToIframe(data: {event: string, data: any}) {
       if (this.iframe_created) {
         const iframe = document.querySelector("iframe");
         if (iframe != null && iframe.contentWindow != null) {
           iframe.contentWindow.postMessage({
-            "event": "sendData",
-            "data": data
+            "event": data.event,
+            "data": data.data
           }, "*");
         }
       }
