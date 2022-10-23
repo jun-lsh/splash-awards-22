@@ -1,5 +1,5 @@
 import web3
-from utils import *
+from utils.utils import *
 import json
 
 w3 = None

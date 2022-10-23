@@ -49,10 +49,8 @@ def water_velocities(date):
 # remember to run this script from the root directory
 if __name__ == "__main__":
     # automated model inference
-    model_path = r"model/gru_model.pt"
-    model = init_model_eval(model_path)
-
-
+    #model_path = r"model/gru_model.pt"
+    #model = init_model_eval(model_path)
 
     initPinata()
     hash = pinFile("base_heatmap.json")

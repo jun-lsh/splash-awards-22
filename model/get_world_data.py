@@ -372,7 +372,7 @@ def main(*args, **kwargs):
     f.close()
 
 
-if __name__ == "__main__":
+def initCreds():
     service_account = '860927269044-compute@developer.gserviceaccount.com'
     private_key = 'keys/splash-awards-telegram-bot-b9f732990190.json'
 
@@ -390,5 +390,8 @@ if __name__ == "__main__":
         device = torch.device("cuda:0")
     else:
         device = torch.device("cpu")
+
+if __name__ == "__main__":
+    initCreds()
 
     main()
