@@ -30,6 +30,14 @@ import numpy as np
 from time import sleep
 
 
+service_account = None
+private_key = None
+date = None
+timespan = None
+sample_n = None
+model_path = None
+device = None
+
 # GRU model functions
 def conv_output_shape(h_w, kernel_size, stride=1, pad=0, dilation=1):
     """
