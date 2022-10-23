@@ -376,8 +376,8 @@ if __name__ == "__main__":
     service_account = '860927269044-compute@developer.gserviceaccount.com'
     private_key = 'keys/splash-awards-telegram-bot-b9f732990190.json'
 
-    # year, month, date
-    date = datetime(2022, 10, 20)
+    # HYCOM dataset usually has a 2 day delay for satellite data
+    date = datetime.today() - timedelta(days=2)
     # time frame for the model
     timespan = 7
     # number of points to sample from the atlantic, and request api data for to predict
