@@ -6,7 +6,7 @@ pinata = None
 
 def initPinata():
     global pinata
-    pinata_keys = get_keys("./../api_keys.json", ["PINATA_API_KEY", "PINATA_API_SECRET"])
+    pinata_keys = get_keys("./../keys/api_keys.json", ["PINATA_API_KEY", "PINATA_API_SECRET"])
     pinata = PinataPy(pinata_keys[0], pinata_keys[1])
 
 

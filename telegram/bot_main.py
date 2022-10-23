@@ -16,7 +16,7 @@ logging.basicConfig(
 )
 
 def main() -> None:
-    tele_token = get_keys("./../api_keys.json", ["TELEGRAM_TOKEN"])[0]
+    tele_token = get_keys("./../keys/api_keys.json", ["TELEGRAM_TOKEN"])[0]
     print(tele_token)
     # updater = Updater(tele_token)
     bot = Bot(tele_token)

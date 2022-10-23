@@ -11,7 +11,7 @@ contract_json = "./../truffle/build/contracts/EternalStorage.json"
 
 def initKeys():
     global eth_keys
-    eth_keys = get_keys("./../api_keys.json", ["OWNER_ADDRESS", "OWNER_PRIVATE_KEY", "INFURA_API_KEY"])
+    eth_keys = get_keys("./../keys/api_keys.json", ["OWNER_ADDRESS", "OWNER_PRIVATE_KEY", "INFURA_API_KEY"])
 
 
 def initWeb3(provider, contract_address, contract_json):
