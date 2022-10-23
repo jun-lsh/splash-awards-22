@@ -27,10 +27,14 @@
     </v-app-bar>
 
     <v-main>
-      <NotFound v-if="notFound"/>
-      <router-view
-        v-else
-        @not-found="(bool) => this.notFound = bool"/>
+      <transition
+        mode="out-in"
+        enter-active-class="animate__animated animate__fadeIn"
+        leave-active-class="animate__animated animate__fadeOut"
+      >
+        <router-view
+          @not-found="(bool) => this.notFound = bool"/>
+      </transition>
     </v-main>
   </v-app>
 </template>
@@ -42,12 +46,6 @@ import NotFound from "@/views/NotFound.vue";
 
 export default Vue.extend({
   name: "App",
-  components: {
-    NotFound,
-  },
-  data: ()=> ({
-    notFound: false,
-  }),
   computed: {
     routes(): Array<{
       name: string;
@@ -69,11 +67,6 @@ export default Vue.extend({
       ];
     },
   },
-  watch: {
-    $route (to, from) {
-      this.notFound = false;
-    }
-  }
 });
 </script>
 
