@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, {RouteConfig} from "vue-router";
 import Home from "@/views/Home.vue";
 import About from "@/views/About.vue";
+import Clusters from "@/views/Clusters.vue";
 
 Vue.use(VueRouter);
 
@@ -17,6 +18,10 @@ const routes: Array<RouteConfig> = [
   {
     path: "/about",
     component: About,
+  },
+  {
+    path: "/clusters",
+    component: Clusters,
   },
 ];
 
