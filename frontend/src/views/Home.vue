@@ -15,7 +15,7 @@
           allowing us to see how our oceans may end up if we do not cut down on plastic waste.
 
 
-          This map is predicting the microplastics concentration for <b>6 September, 2022</b>
+          This map is predicting the microplastics concentration for <b>15 September, 2022</b>
         </p>
       </v-col>
       <v-col cols="8" style="height: 70%">
@@ -68,7 +68,7 @@ export default Vue.extend({
       if (lat != null && lng != null) {
         this.sendDataToIframe({event: "setCenter", data: {lat: lat, lng: lng}});
       }
-      this.getHeatMapData(6, "0x0").then(
+      this.getHeatMapData(42, "0x0").then(
         data => {
           this.sendDataToIframe({event: "sendData", data: data});
         }
@@ -124,7 +124,7 @@ export default Vue.extend({
   created(){
     this.web3 = new Web3(
       new Web3.providers.HttpProvider(
-        `https://ropsten.infura.io/v3/${process.env.VUE_APP_INFURA_API_KEY}`
+        `https://ropsten.infura.io/v3/4fb5537dd7124137a2bc95668e973d76`
       )
     );
     this.eternalStorage = new this.web3.eth.Contract(this.eternalStorageJson.abi, this.CONTRACT_ADDRESS);
