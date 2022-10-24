@@ -1,19 +1,19 @@
 <template>
   <v-container fluid class="px-12 py-6">
-    <h1>Clusters</h1>
+    <h1>Top 10 largest clusters</h1>
 
     <div style="max-width: 80rem">
       <v-row class="mt-4">
-        <v-col cols="12" lg="4" md="8" v-for="(item, index) in sortedClusters" :key="index">
+        <v-col cols="12" lg="4" md="8" v-for="(item, index) in clusters" :key="index">
           <router-link
             class="unit-card"
             :to="'/home?lat=' + item.lat + '&lng=' + item.lng"
             style="text-decoration: none; color: inherit;"
           >
             <v-card class="pa-4 fill-height d-flex flex-column" elevation="2">
-              <v-card-title>Concentration: {{ item.conc }}</v-card-title>
+              <v-card-title>Concentration: {{ Math.round(item.conc*100)/100 }}</v-card-title>
               <v-card-text>
-                Lat, Long: {{ item.lat }}, {{ item.lng }}<br/>
+                Lat, Long: {{ Math.round(item.lat*1000)/1000 }}, {{ Math.round(item.lng*1000)/1000 }}<br/>
               </v-card-text>
             </v-card>
           </router-link>
@@ -41,18 +41,6 @@ export default Vue.extend({
       clusters: {} as Array<{lat: number, lng: number, conc: number}>,
     }
   ),
-  computed: {
-    sortedClusters(): Array<{
-      lat: number,
-      lng: number,
-      conc : number
-    }> {
-      if (this.clusters !== {}) {
-        let clusters = this.clusters;
-        return clusters.sort((a, b) => a.conc - b.conc).slice(0, 10);
-      }
-    }
-  },
   methods: {
     getHeatMapData(timestamp : number,  coords : string) : Promise<any>{
       console.log("called");
@@ -88,8 +76,9 @@ export default Vue.extend({
     );
     this.eternalStorage = new this.web3.eth.Contract(this.eternalStorageJson.abi, this.CONTRACT_ADDRESS);
 
-    this.getHeatMapData(120, 0x0).then(data => {
-      console.log(data);
+    this.getHeatMapData(120, "0x0").then(data => {
+      this.clusters = data.data;
+      this.clusters = this.clusters.sort((a, b) => b.conc - a.conc).slice(0, 10);
     });
   }
 });

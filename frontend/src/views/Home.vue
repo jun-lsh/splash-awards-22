@@ -105,8 +105,8 @@ export default Vue.extend({
       }
 
       const epoch = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 8, 0).valueOf();
-      console.log(epoch)
-      this.getHeatMapData(epoch, "0x0").then(
+      console.log(epoch);
+      this.getHeatMapData(120, "0x0").then(
         data => {
           this.sendDataToIframe({event: "sendData", data: data});
         }
