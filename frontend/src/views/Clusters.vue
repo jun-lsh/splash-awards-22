@@ -1,6 +1,10 @@
 <template>
   <v-container fluid class="px-12 py-6">
     <h1>Top 10 largest clusters</h1>
+    <p>
+      Below lists the top 10 areas with the largest microplastic concentrations <br/>
+      Click to view them on our interactive map!
+    </p>
 
     <div style="max-width: 80rem">
       <v-row class="mt-4">

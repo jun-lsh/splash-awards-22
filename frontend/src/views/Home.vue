@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="px-12 pt-4 pb-16 fill-height">
-    <v-row class="d-flex align-center justify-center fill-height">
+    <v-row class="d-flex align-center justify-center" style="height: 90%">
       <v-col cols="4">
           <h2>
             What Does This Map Show Me?
@@ -18,7 +18,7 @@
           This map is predicting the microplastics concentration for <b id = "date"></b>
         </p>
       </v-col>
-      <v-col cols="8" style="height: 70%">
+      <v-col cols="8" style="height: 80%">
         <iframe
           id="leaflet"
           src="leaflet.html"
@@ -28,25 +28,23 @@
           v-on:load="onLoadIframe"
         />
       </v-col>
-      <v-row>
-        <v-col cols="11" md="10" sm="9">
-          <v-slider
-            v-model="value"
-            persistent-hint="Select a date"
-            min="0"
-            max="365"
-            step="1"
-          >
-          </v-slider>
-        </v-col>
+      <v-row class="d-flex align-center">
+        <p class="mr-4">Select a date to display the data: </p>
+        <v-slider
+          v-model="value"
+          persistent-hint="Select a date"
+          min="0"
+          max="365"
+          step="1"
+        >
+        </v-slider>
 
-        <v-col cols="1" md="2" sm="3">
-          <p class="mt-0 pt-0">{{intToDate}}</p>
-        </v-col>
+        <p class="mt-0 pt-0">{{intToDate}}</p>
       </v-row>
     </v-row>
 
     <v-row class="d-flex align-start justify-center mb-4">
+      <p class="mr-2">Join our tele channel! <br/> Get updates on clusters</p>
       <a href="https://t.me/uplastics" target="_blank">
         <v-btn
           width="50px"
