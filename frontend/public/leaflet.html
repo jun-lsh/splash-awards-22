@@ -57,7 +57,18 @@
 
         window.onmessage = function(e) { // inside the iframe
             if (e.data.event === "sendData") {
-                heatmapLayer.setData(e.data.data);
+                const data = e.data.data;
+                data.data.forEach(val => {
+                    if (val.conc > 50) {
+                        const marker = L.marker([val.lng, val.lat]);
+                        marker.bindPopup(
+                            "Lat, Long: " + Math.round(val.lat*10000)/10000 + " " + Math.round(val.lng*10000)/10000 + "<br/>" +
+                            "Concentration: " + Math.round(val.conc*100)/100
+                        );
+                        marker.addTo(map);
+                    }
+                })
+                heatmapLayer.setData(data);
             }
             if (e.data.event === "setCenter") {
                 map.panTo(new L.LatLng(e.data.data.lng, e.data.data.lat));

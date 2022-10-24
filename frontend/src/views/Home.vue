@@ -14,6 +14,7 @@
           In longer timescales, we would be able to see <b>the dangers if this problem is left unchecked</b>,
           allowing us to see how our oceans may end up if we do not cut down on plastic waste.
 
+          <br/>
 
           This map is predicting the microplastics concentration for <b id = "date"></b>
         </p>
