@@ -67,6 +67,12 @@
       </v-col>
     </v-row>
 
+    <div style="text-align: center">
+      <a href="http://www.oceansplasticleanup.com/">http://www.oceansplasticleanup.com/</a> <br/>
+      <a href="https://teamseas.org/">https://teamseas.org/</a> <br/>
+      <a href="https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/">https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/</a> <br/>
+      <a href="https://www.publichygienecouncil.sg/beachcleanup">https://www.publichygienecouncil.sg/beachcleanup</a>
+    </div>
   </v-container>
 </template>
 

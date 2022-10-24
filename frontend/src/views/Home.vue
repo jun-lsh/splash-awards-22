@@ -15,6 +15,7 @@
           allowing us to see how our oceans may end up if we do not cut down on plastic waste.
 
           <br/>
+          <br/>
 
           This map is predicting the microplastics concentration for <b id = "date"></b>
         </p>
