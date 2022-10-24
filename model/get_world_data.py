@@ -385,7 +385,7 @@ def call_model(*args, **kwargs):
 
     # write model predictions to output file
     print("writing inference results to output file model_preds.json")
-    f = open(f"model_preds_{date}.json", "w")
+    f = open(f"model_preds_{date.strftime('%d-%m-%y')}.json", "w")
     f.write(json.dumps([{'lat': lat, 'lng': lng, 'conc': conc} for lat, lng, conc in results.tolist()]))
     f.close()
 
