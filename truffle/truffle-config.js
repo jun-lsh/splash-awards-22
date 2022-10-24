@@ -70,11 +70,11 @@ module.exports = {
      network_id: "*",       // Any network (default: none)
     },
 
-    ropsten: {
+    goerli: {
       provider: function() {
-        return new HDWalletProvider(MNEMONIC, "https://ropsten.infura.io/v3/" + PROJECT_ID, 1);
+        return new HDWalletProvider(MNEMONIC, "https://goerli.infura.io/v3/" + PROJECT_ID, 0);
       },
-      network_id: 3
+      network_id: '5', // eslint-disable-line camelcase
     }
     
   },

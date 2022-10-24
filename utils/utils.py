@@ -1,5 +1,6 @@
 import json
 import base58
+import os
 
 def get_keys(path, keys):
     output_keys = []
@@ -23,3 +24,13 @@ def get_bytes32_from_coords(coords):
         output_bytes <<= 64
         output_bytes += (coord[0] << 16) + coord[1]
     return output_bytes.to_bytes(32, 'big')
+
+def pretty_json(path):
+    with open(path, 'r') as of:
+        json_object = json.load(of)
+    formatted = {
+        "data":json_object
+    }
+    filename = os.path.basename(path)
+    with open(f"./outputs/{filename}", "w") as of:
+        json.dump(formatted, of, separators=(',', ':'))

@@ -6,12 +6,12 @@ w3 = None
 eternalStorage = None
 eth_keys = []
 
-contract_address = "0x3260Df12C458Ac84CBbeFb82F92E8Ddc57927CD7"
+contract_address = "0x75BCc6456812A005084391ADfBB21c6C54726db5"
 contract_json = "./../truffle/build/contracts/EternalStorage.json"
 
 def initKeys():
     global eth_keys
-    eth_keys = get_keys("./../api_keys.json", ["OWNER_ADDRESS", "OWNER_PRIVATE_KEY", "INFURA_API_KEY"])
+    eth_keys = get_keys("./../keys/api_keys.json", ["OWNER_ADDRESS", "OWNER_PRIVATE_KEY", "INFURA_API_KEY"])
 
 
 def initWeb3(provider, contract_address, contract_json):
@@ -46,12 +46,13 @@ def appendHash(timestamp, coords, ipfs_hash):
     signed_tx = w3.eth.account.sign_transaction(tx_dict, eth_keys[1])
     tx_hash = w3.eth.sendRawTransaction(signed_tx.rawTransaction)
     print(tx_hash)
+    return tx_hash
 
 if __name__ == "__main__":
     initKeys()
-    initWeb3(f"https://ropsten.infura.io/v3/{eth_keys[2]}", contract_address, contract_json)
+    initWeb3(f"https://goerli.infura.io/v3/{eth_keys[2]}", contract_address, contract_json)
 #    appendUint(bytes.fromhex("abab"), 89)
-    appendHash(6, [[0,1]]*4, "QmfM9xSr5g344Uhxt2kzxb4EoBqy4hy6zGPJEYD4MUCucu")
+    appendHash(120, [[0,0]]*4, "QmdTdrfznCTHVJdFSrxLPdndr1bst4ysF1XUJE1qd3Dvgv")
     
 
 

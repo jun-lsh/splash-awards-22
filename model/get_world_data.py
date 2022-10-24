@@ -1,3 +1,4 @@
+import math
 import ee
 from datetime import timedelta, datetime
 from google.cloud import storage
@@ -29,6 +30,14 @@ from torch.utils.data import Dataset, DataLoader, random_split
 import numpy as np
 from time import sleep
 
+
+service_account = None
+private_key = None
+date = None
+timespan = None
+sample_n = None
+model_path = None
+device = None
 
 # GRU model functions
 def conv_output_shape(h_w, kernel_size, stride=1, pad=0, dilation=1):
@@ -163,14 +172,24 @@ class CustomImageDataset(Dataset):
         return coords, image
 
 
-def main(*args, **kwargs):
+def call_model(*args, **kwargs):
+    
+    # sacrilege 
+    global service_account
+    global private_key
+    global date
+    global timespan
+    global sample_n
+    global model_path
+    global device
+    
     # initialize earth engine using json key for service account
     credentials = ee.ServiceAccountCredentials(service_account, private_key)
     ee.Initialize(credentials)
 
     # read the atlantic ocean shape from shapefile
     print("reading sampling region atlantic")
-    tes = gp.read_file(r'data\iho\iho.shp')
+    tes = gp.read_file(r'./data/iho/iho.shp')
     df = tes.loc[tes.name.isin(['South Atlantic Ocean', 'North Atlantic Ocean'])]
     atlantic = df.dissolve().to_crs(epsg=3857)
 
@@ -240,7 +259,7 @@ def main(*args, **kwargs):
     # script keeps crashing when we task.start() for too many points, so we split it into smaller chunks so EE doesn't
     # complain as much
     print("sending api request to earth engine")
-    size = 500
+    size = 250
     for i in range(0, sample_n, size):
         task_prefix = f"{date.strftime('%d.%m.%Y')}/atlantic_water_velocities_{i}"
         task = extract_raster_values_from_df(data_points.iloc[i:i + size].copy(), 'HYCOM/sea_water_velocity',
@@ -248,8 +267,8 @@ def main(*args, **kwargs):
                                              lookback_days=timespan, export=True)
         task.start()
 
-    print("waiting 10 minutes (average) for task completion")
-    sleep(600)
+    #print("waiting 10 minutes (average) for task completion")
+    #sleep(600)
 
     # initialise GCS credentials
     client = storage.Client.from_service_account_json(json_credentials_path=private_key)
@@ -348,7 +367,10 @@ def main(*args, **kwargs):
     print("instantiating GRU model for inference")
     # load model in eval mode
     model = GRUNet(input_dim, hidden_dim, output_dim, n_layers, drop_prob)
-    model.load_state_dict(torch.load(model_path))
+    if torch.cuda.is_available():
+        model.load_state_dict(torch.load(model_path))
+    else:
+        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     model = model.to(device)
 
     dataset = CustomImageDataset(max_shape=(11, 11), data_file='data/latest_atlantic_data.pickle')
@@ -367,28 +389,50 @@ def main(*args, **kwargs):
 
     # write model predictions to output file
     print("writing inference results to output file model_preds.json")
-    f = open("model_preds.json", "w")
-    f.write(json.dumps([{'lat': lat, 'lng': lng, 'conc': conc} for lat, lng, conc in results.tolist()]))
+    f = open(f"model_preds_{date.strftime('%d-%m-%y')}.json", "w")
+
+    # we will now engage in bad coding practices
+
+    f.write(json.dumps([{'lat': lat, 'lng': lng, 'count': math.floor(math.log10(10*conc))} for lat, lng, conc in results.tolist()]))
     f.close()
+    return f"model_preds_{date.strftime('%d-%m-%y')}.json"
 
 
-if __name__ == "__main__":
+def initCreds():
+
+    # sacrilege 
+    global service_account
+    global private_key
+    global date
+    global timespan
+    global sample_n
+    global model_path
+    global device
+
     service_account = '860927269044-compute@developer.gserviceaccount.com'
-    private_key = 'keys/splash-awards-telegram-bot-b9f732990190.json'
+    private_key = './../keys/splash-awards-telegram-bot-b9f732990190.json'
 
-    # HYCOM dataset usually has a 2 day delay for satellite data
+    # HYCOM dataset usually has a 3-day delay for satellite data
+    # remember we are predicting 1 day into the future, and the date we provide is the date we are trying to
+    # predict values for, and it will request api data for all days before but not including itself, therefore timedelta
+    # minus 2 days.
     date = datetime.today() - timedelta(days=2)
     # time frame for the model
     timespan = 7
     # number of points to sample from the atlantic, and request api data for to predict
     sample_n = 10000
     # filepath of model to use for inference
-    model_path = r"model_checkpoints/GRU_epoch_1500_loss_3.401.pt"
+    model_path = r"./model_checkpoints/GRU_epoch_1500_loss_3.401.pt"
 
     # If we have a GPU available, we'll set our device to GPU. We'll use this device variable later in our code.
+
+#    device = torch.device("cpu")
+
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
     else:
         device = torch.device("cpu")
 
-    main()
+if __name__ == "__main__":
+    initCreds()
+    call_model()
