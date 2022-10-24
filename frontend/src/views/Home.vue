@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="px-12 py-6 fill-height">
+  <v-container fluid class="px-12 pt-4 pb-16 fill-height">
     <v-row class="d-flex align-center justify-center fill-height">
       <v-col cols="4">
           <h2>
@@ -28,7 +28,36 @@
           v-on:load="onLoadIframe"
         />
       </v-col>
+      <v-row>
+        <v-col cols="11" md="10" sm="9">
+          <v-slider
+            v-model="value"
+            persistent-hint="Select a date"
+            min="0"
+            max="365"
+            step="1"
+          >
+          </v-slider>
+        </v-col>
+
+        <v-col cols="1" md="2" sm="3">
+          <p class="mt-0 pt-0">{{intToDate}}</p>
+        </v-col>
+      </v-row>
     </v-row>
+
+    <v-row class="d-flex align-start justify-center mb-4">
+      <a href="https://t.me/uplastics" target="_blank">
+        <v-btn
+          width="50px"
+          height="50px"
+          icon
+        >
+          <v-icon size="50px">$telegram</v-icon>
+        </v-btn>
+      </a>
+    </v-row>
+
   </v-container>
 </template>
 
@@ -43,13 +72,19 @@ import { Contract } from "web3-eth-contract";
 
 export default Vue.extend({
   name: "Home",
+  computed: {
+    intToDate() {
+      return (new Date(Date.now() - 1000 * 60 * 60 * 24 * (365 - this.value)).toDateString());
+    }
+  },
   data: () =>(
     {
       CONTRACT_ADDRESS: "0x75BCc6456812A005084391ADfBB21c6C54726db5",
       iframe_created: false,
       web3: {} as Web3,
       eternalStorage: {} as Contract,
-      eternalStorageJson: require("./../components/EternalStorage.json")
+      eternalStorageJson: require("./../components/EternalStorage.json"),
+      value: 365,
     }
   ),
   methods: {
@@ -65,7 +100,7 @@ export default Vue.extend({
       this.iframe_created = true;
       const lat = this.$route.query.lat;
       const lng = this.$route.query.lng;
-      if (lat != null && lng != null) {
+      if (typeof lat != undefined && typeof lng != undefined) {
         this.sendDataToIframe({event: "setCenter", data: {lat: lat, lng: lng}});
       }
       this.getHeatMapData(120, "0x0").then(
