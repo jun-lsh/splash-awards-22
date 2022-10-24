@@ -395,6 +395,7 @@ def call_model(*args, **kwargs):
 
     f.write(json.dumps([{'lat': lat, 'lng': lng, 'count': math.floor(math.log10(10*conc))} for lat, lng, conc in results.tolist()]))
     f.close()
+    return f"model_preds_{date.strftime('%d-%m-%y')}.json"
 
 
 def initCreds():
