@@ -258,7 +258,7 @@ def call_model(*args, **kwargs):
     # script keeps crashing when we task.start() for too many points, so we split it into smaller chunks so EE doesn't
     # complain as much
     print("sending api request to earth engine")
-    size = 500
+    size = 250
     for i in range(0, sample_n, size):
         task_prefix = f"{date.strftime('%d.%m.%Y')}/atlantic_water_velocities_{i}"
         task = extract_raster_values_from_df(data_points.iloc[i:i + size].copy(), 'HYCOM/sea_water_velocity',
@@ -266,8 +266,8 @@ def call_model(*args, **kwargs):
                                              lookback_days=timespan, export=True)
         task.start()
 
-    print("waiting 10 minutes (average) for task completion")
-    sleep(600)
+    #print("waiting 10 minutes (average) for task completion")
+    #sleep(600)
 
     # initialise GCS credentials
     client = storage.Client.from_service_account_json(json_credentials_path=private_key)
@@ -366,7 +366,7 @@ def call_model(*args, **kwargs):
     print("instantiating GRU model for inference")
     # load model in eval mode
     model = GRUNet(input_dim, hidden_dim, output_dim, n_layers, drop_prob)
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     model = model.to(device)
 
     dataset = CustomImageDataset(max_shape=(11, 11), data_file='data/latest_atlantic_data.pickle')
@@ -417,10 +417,13 @@ def initCreds():
     model_path = r"./model_checkpoints/GRU_epoch_1500_loss_3.401.pt"
 
     # If we have a GPU available, we'll set our device to GPU. We'll use this device variable later in our code.
-    if torch.cuda.is_available():
-        device = torch.device("cuda:0")
-    else:
-        device = torch.device("cpu")
+
+    device = torch.device("cpu")
+
+#    if torch.cuda.is_available():
+#        device = torch.device("cuda:0")
+#    else:
+#        device = torch.device("cpu")
 
 if __name__ == "__main__":
     initCreds()
