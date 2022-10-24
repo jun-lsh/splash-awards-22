@@ -67,11 +67,23 @@
       </v-col>
     </v-row>
 
-    <div style="text-align: center">
+    <div style="text-align: center; width: 50%; margin: 0 auto">
+      <b>How can I help out?</b> <br/>
+      <p>
+        Coastal cleanup efforts can mitigate the risks that plastic pollution brings to the animals that live on the beach.
+        You can read more about coastal cleanup efforts or organise one in Singapore using the links below.
+        Read up on the appropriate preparations and gather a group of people to host a beach clean up!
+      </p>
+      <a href="https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/">https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/</a> <br/>
+      <a href="https://www.publichygienecouncil.sg/beachcleanup">https://www.publichygienecouncil.sg/beachcleanup</a> <br/> <br/>
+
+      <p>
+        There are also many groups focusing on cleaning up the large garbage patches in the ocean,
+        While we are unable to go out there and clean it up ourselves, we can donate to these organisations
+        that focuses on making our oceans a cleaner place.
+      </p>
       <a href="http://www.oceansplasticleanup.com/">http://www.oceansplasticleanup.com/</a> <br/>
       <a href="https://teamseas.org/">https://teamseas.org/</a> <br/>
-      <a href="https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/">https://oceanconservancy.org/trash-free-seas/international-coastal-cleanup/</a> <br/>
-      <a href="https://www.publichygienecouncil.sg/beachcleanup">https://www.publichygienecouncil.sg/beachcleanup</a>
     </div>
   </v-container>
 </template>
