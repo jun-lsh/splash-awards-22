@@ -45,7 +45,7 @@ export default Vue.extend({
   name: "Home",
   data: () =>(
     {
-      CONTRACT_ADDRESS: "0x3260Df12C458Ac84CBbeFb82F92E8Ddc57927CD7",
+      CONTRACT_ADDRESS: "0x75BCc6456812A005084391ADfBB21c6C54726db5",
       iframe_created: false,
       web3: {} as Web3,
       eternalStorage: {} as Contract,
@@ -68,7 +68,7 @@ export default Vue.extend({
       if (lat != null && lng != null) {
         this.sendDataToIframe({event: "setCenter", data: {lat: lat, lng: lng}});
       }
-      this.getHeatMapData(42, "0x0").then(
+      this.getHeatMapData(120, "0x0").then(
         data => {
           this.sendDataToIframe({event: "sendData", data: data});
         }
@@ -124,7 +124,7 @@ export default Vue.extend({
   created(){
     this.web3 = new Web3(
       new Web3.providers.HttpProvider(
-        `https://ropsten.infura.io/v3/4fb5537dd7124137a2bc95668e973d76`
+        `https://goerli.infura.io/v3/4fb5537dd7124137a2bc95668e973d76`
       )
     );
     this.eternalStorage = new this.web3.eth.Contract(this.eternalStorageJson.abi, this.CONTRACT_ADDRESS);

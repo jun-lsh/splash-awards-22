@@ -33,4 +33,4 @@ def pretty_json(path):
     }
     filename = os.path.basename(path)
     with open(f"./outputs/{filename}", "w") as of:
-        json.dump(formatted, of, indent=4)
+        json.dump(formatted, of, separators=(',', ':'))

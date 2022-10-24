@@ -1,3 +1,4 @@
+import math
 import ee
 from datetime import timedelta, datetime
 from google.cloud import storage
@@ -366,7 +367,10 @@ def call_model(*args, **kwargs):
     print("instantiating GRU model for inference")
     # load model in eval mode
     model = GRUNet(input_dim, hidden_dim, output_dim, n_layers, drop_prob)
-    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+    if torch.cuda.is_available():
+        model.load_state_dict(torch.load(model_path))
+    else:
+        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     model = model.to(device)
 
     dataset = CustomImageDataset(max_shape=(11, 11), data_file='data/latest_atlantic_data.pickle')
@@ -386,7 +390,10 @@ def call_model(*args, **kwargs):
     # write model predictions to output file
     print("writing inference results to output file model_preds.json")
     f = open(f"model_preds_{date.strftime('%d-%m-%y')}.json", "w")
-    f.write(json.dumps([{'lat': lat, 'lng': lng, 'conc': conc} for lat, lng, conc in results.tolist()]))
+
+    # we will now engage in bad coding practices
+
+    f.write(json.dumps([{'lat': lat, 'lng': lng, 'count': math.floor(math.log10(10*conc))} for lat, lng, conc in results.tolist()]))
     f.close()
 
 
@@ -418,12 +425,12 @@ def initCreds():
 
     # If we have a GPU available, we'll set our device to GPU. We'll use this device variable later in our code.
 
-    device = torch.device("cpu")
+#    device = torch.device("cpu")
 
-#    if torch.cuda.is_available():
-#        device = torch.device("cuda:0")
-#    else:
-#        device = torch.device("cpu")
+    if torch.cuda.is_available():
+        device = torch.device("cuda:0")
+    else:
+        device = torch.device("cpu")
 
 if __name__ == "__main__":
     initCreds()
