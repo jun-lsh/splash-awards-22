@@ -44,7 +44,7 @@
     </v-row>
 
     <v-row class="d-flex align-start justify-center mb-4">
-      <p class="mr-2">Join our tele channel! <br/> Get updates on clusters</p>
+      <p class="mr-2">Join our Telegram channel! <br/> Get updates on clusters through our bot!</p>
       <a href="https://t.me/uplastics" target="_blank">
         <v-btn
           width="50px"
