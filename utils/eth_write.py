@@ -46,6 +46,7 @@ def appendHash(timestamp, coords, ipfs_hash):
     signed_tx = w3.eth.account.sign_transaction(tx_dict, eth_keys[1])
     tx_hash = w3.eth.sendRawTransaction(signed_tx.rawTransaction)
     print(tx_hash)
+    return tx_hash
 
 if __name__ == "__main__":
     initKeys()
