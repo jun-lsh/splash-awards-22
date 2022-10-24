@@ -147,7 +147,7 @@ export default Vue.extend({
         }
       );
         }
-      )
+      );
     }
   },
   mounted () {
