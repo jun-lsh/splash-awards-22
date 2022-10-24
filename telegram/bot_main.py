@@ -54,7 +54,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-
+    
     initPinata()
     initCreds()
     initKeys()

@@ -41,11 +41,11 @@
             //   (there will always be a red spot with useLocalExtremas true)
             "useLocalExtrema": true,
             // which field name in your data represents the latitude - default "lat"
-            latField: 'lat',
+            latField: 'lng',
             // which field name in your data represents the longitude - default "lng"
-            lngField: 'lng',
+            lngField: 'lat',
             // which field name in your data represents the data value - default "value"
-            valueField: 'count'
+            valueField: 'conc'
         };
 
         // creating heatmap overlay
@@ -60,7 +60,7 @@
                 heatmapLayer.setData(e.data.data);
             }
             if (e.data.event === "setCenter") {
-                map.panTo(new L.LatLng(e.data.data.lat, e.data.data.lng));
+                map.panTo(new L.LatLng(e.data.data.lng, e.data.data.lat));
                 map.setZoom(6);
             }
         };
