@@ -49,7 +49,7 @@ def appendHash(timestamp, coords, ipfs_hash):
 
 if __name__ == "__main__":
     initKeys()
-    initWeb3(f"https://ropsten.infura.io/v3/{eth_keys[2]}", contract_address, contract_json)
+    initWeb3(f"https://goerli.infura.io/v3/{eth_keys[2]}", contract_address, contract_json)
 #    appendUint(bytes.fromhex("abab"), 89)
     appendHash(6, [[0,1]]*4, "QmfM9xSr5g344Uhxt2kzxb4EoBqy4hy6zGPJEYD4MUCucu")
     
