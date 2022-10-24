@@ -103,7 +103,10 @@ export default Vue.extend({
       if (typeof lat != undefined && typeof lng != undefined) {
         this.sendDataToIframe({event: "setCenter", data: {lat: lat, lng: lng}});
       }
-      this.getHeatMapData(120, "0x0").then(
+
+      const epoch = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 8, 0).valueOf();
+      console.log(epoch)
+      this.getHeatMapData(epoch, "0x0").then(
         data => {
           this.sendDataToIframe({event: "sendData", data: data});
         }
