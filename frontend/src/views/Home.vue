@@ -15,7 +15,7 @@
           allowing us to see how our oceans may end up if we do not cut down on plastic waste.
 
 
-          This map is predicting the microplastics concentration for <b>15 September, 2022</b>
+          This map is predicting the microplastics concentration for <b id = "date"></b>
         </p>
       </v-col>
       <v-col cols="8" style="height: 70%">
@@ -103,10 +103,14 @@ export default Vue.extend({
       if (typeof lat != undefined && typeof lng != undefined) {
         this.sendDataToIframe({event: "setCenter", data: {lat: lat, lng: lng}});
       }
-
-      const epoch = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 8, 0).valueOf();
-      console.log(epoch);
-      this.getHeatMapData(120, "0x0").then(
+      const n =  new Date();
+      const y = n.getFullYear();
+      const m = n.getMonth() + 1;
+      const d = n.getDate();
+      document.getElementById("date")!.innerHTML = m + "/" + d + "/" + y;
+      const epoch = new Date(y, m-1, d, 8, 0).valueOf();
+      console.log(epoch)
+      this.getHeatMapData(epoch+1, "0x0").then(
         data => {
           this.sendDataToIframe({event: "sendData", data: data});
         }
